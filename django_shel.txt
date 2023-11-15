@@ -1,0 +1,82 @@
+# D5
+hometask
+
+python manage.py shell
+from django.db import models
+from django.contrib.auth.models import User
+from news.models import *
+
+dir()
+
+Создать двух пользователей (с помощью метода User.objects.create_user('username')).
+
+first_user = User.objects.create(username='first_user')
+second_user = User.objects.create(username='second_user')
+
+Создать два объекта модели Author, связанные с пользователями.
+
+Author.objects.create(content_creator=first_user)
+Author.objects.create(content_creator=second_user)
+
+Добавить 4 категории в модель Category.
+
+Category.objects.create(paper_name='Comics')
+Category.objects.create(paper_name='Fantasy')
+Category.objects.create(paper_name='Fantastic')
+Category.objects.create(paper_name='Triller')
+
+Добавить 2 статьи и 1 новость.
+очепятался в коде лень править comment = новость условно
+
+content_creator1 = Author.objects.get(id=1)
+content_creator2 = Author.objects.get(id=2)
+Post.objects.create(creator=content_creator1  , type_choice= 'content', header='first content creator text', content='text about Comics')
+Post.objects.create(creator=content_creator2  , type_choice= 'content', header='Second content creator text ', content='text about fantasy worlds')
+Post.objects.create(creator=content_creator2  , type_choice= 'news', header='The news of the second content creator ', content='news about fantastic books')
+Post.objects.get(id=2).preview()
+
+Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+
+Post.objects.get(id=1).post_category.add(Category.objects.get(id=1))
+Post.objects.get(id=1).post_category.add(Category.objects.get(id=3))
+Post.objects.get(id=2).post_category.add(Category.objects.get(id=4))
+
+Создать как минимум 4 комментария к разным объектам модели Post (в каждом объекте должен быть как минимум один комментарий).
+
+Comment.objects.create(comment_to_post=Post.objects.get(id=1), comment_to_user=Author.objects.get(id=1).content_creator, comment_text='comment about comics content from content creator 1')
+Comment.objects.create(comment_to_post=Post.objects.get(id=1), comment_to_user=Author.objects.get(id=2).content_creator, comment_text='comment about comics content from content creator 2')
+Comment.objects.create(comment_to_post=Post.objects.get(id=2), comment_to_user=Author.objects.get(id=1).content_creator, comment_text='comment about fantasy content from content creator 1')
+Comment.objects.create(comment_to_post=Post.objects.get(id=2), comment_to_user=Author.objects.get(id=2).content_creator, comment_text='comment about fantasy content from content creator 2')
+
+Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+
+Post.objects.get(id=1).like()
+Post.objects.get(id=1).dislike()
+Post.objects.get(id=2).like()
+Post.objects.get(id=2).dislike()
+Comment.objects.get(id=1).like()
+Comment.objects.get(id=1).dislike()
+Comment.objects.get(id=2).like()
+Comment.objects.get(id=2).dislike()
+Comment.objects.get(id=3).like()
+Comment.objects.get(id=3).dislike()
+Comment.objects.get(id=2).comment_rating
+
+Обновить рейтинги пользователей.
+
+a1 = Author.objects.get(id=1)
+a1.update_rating()
+
+Вывести username и рейтинг лучшего пользователя (применяя сортировку и возвращая поля первого объекта).
+
+a1.rating_content
+Author.objects.all().order_by('-rating_content')[0]
+
+Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+
+Post.objects.all().order_by('-rating')[0]
+
+Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+
+a2 = Post.objects.all().order_by('-rating')[0]
+Comment.objects.all().filter(comment_to_post=a3)
